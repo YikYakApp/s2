@@ -12,14 +12,9 @@
 #ifndef STRINGS_STRUTIL_H_
 #define STRINGS_STRUTIL_H_
 
+#include "base/stl_decl.h"
 #include <functional>
 using std::less;
-
-#include <hash_map>
-using __gnu_cxx::hash_map;
-
-#include <hash_set>
-using __gnu_cxx::hash_set;
 
 #include <set>
 using std::set;
@@ -46,9 +41,6 @@ using std::vector;
 #endif
 #include <ctype.h>      // not needed, but removing it will break the build
 
-using namespace std;
-using namespace __gnu_cxx;
-
 // A buffer size which is large enough for all the FastToBuffer functions, as
 // well as DoubleToBuffer and FloatToBuffer.  We define this here in case other
 // string headers depend on it.
@@ -63,9 +55,7 @@ static const int kFastToBufferSize =       32;
 //#include "escaping.h"
 //#include "host_port.h"
 #include "stringprintf.h"
-#include "base/stl_decl.h"
 #include "base/port.h"
-#include "endian.h"
 
 // ----------------------------------------------------------------------
 // FpToString()

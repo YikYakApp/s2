@@ -3,7 +3,7 @@
 #ifndef UTIL_GEOMETRY_S2POLYGONBUILDER_H__
 #define UTIL_GEOMETRY_S2POLYGONBUILDER_H__
 
-#include <hash_map>
+#include <ext/hash_map>
 using __gnu_cxx::hash_map;
 
 #include <set>

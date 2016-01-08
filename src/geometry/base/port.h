@@ -109,7 +109,7 @@ typedef uint16_t u_int16_t;
 #define bswap_32(x) _byteswap_ulong(x)
 #define bswap_64(x) _byteswap_uint64(x)
 
-#elif defined(OS_MACOSX)
+#elif defined(OS_MACOSX) || (__APPLE__)
 // Mac OS X / Darwin features
 #include <libkern/OSByteOrder.h>
 #define bswap_16(x) OSSwapInt16(x)

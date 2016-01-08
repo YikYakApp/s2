@@ -488,7 +488,6 @@ inline S2CellId S2CellId::End(int level) {
 ostream& operator<<(ostream& os, S2CellId const& id);
 
 #ifndef SWIG
-#include<hash_set>
 namespace __gnu_cxx {
 
 

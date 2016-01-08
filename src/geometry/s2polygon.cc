@@ -1,13 +1,12 @@
 // Copyright 2005 Google Inc. All Rights Reserved.
 
+#include "base/stl_decl.h"
 #include <algorithm>
 using std::min;
 using std::max;
 using std::swap;
 using std::reverse;
 
-#include <hash_map>
-using __gnu_cxx::hash_map;
 
 #include <set>
 using std::set;
@@ -107,7 +106,7 @@ S2Polygon::~S2Polygon() {
 
 typedef pair<S2Point, S2Point> S2PointPair;
 
-#include<hash_set>
+#include<ext/hash_set>
 namespace __gnu_cxx {
 
 template<> struct hash<S2PointPair> {

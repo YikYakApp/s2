@@ -13,9 +13,10 @@ using std::multiset;
 #include <vector>
 using std::vector;
 
-#include <hash_map>
+#include <ext/hash_map>
 using __gnu_cxx::hash_map;
 
+//#include "base/stl_decl.h"
 #include <utility>
 using std::pair;
 using std::make_pair;

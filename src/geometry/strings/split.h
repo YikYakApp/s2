@@ -19,11 +19,15 @@ using std::multiset;
 #include <utility>
 using std::pair;
 using std::make_pair;
-
+#if defined __GNUC__ || defined __APPLE__
+#include <ext/hash_map>
+#include <ext/hash_set>
+#else
 #include <hash_map>
+#include <hash_set>
+#endif
 using __gnu_cxx::hash_map;
 
-#include <hash_set>
 using __gnu_cxx::hash_set;
 
 

@@ -9,9 +9,8 @@ using std::max;
 using std::swap;
 using std::reverse;
 
-#include <hash_map>
-using __gnu_cxx::hash_map;
   // To have template struct hash<T> defined
+#include "base/stl_decl.h"
 #include "base/basictypes.h"
 #include "base/logging.h"
 #include "base/macros.h"
@@ -26,7 +25,7 @@ using __gnu_cxx::hash_map;
 // arithmetic expressions (e.g. (1-x)*p1 + x*p2).
 typedef Vector3_d S2Point;
 
-#include<hash_set>
+#include<ext/hash_set>
 namespace __gnu_cxx {
 
 

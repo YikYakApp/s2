@@ -14,8 +14,10 @@ SYSCFLAGS=-fPIC
 CCC=g++
 
 GFLAGS_INC = -I$(GFLAGS_DIR)/include
+OPENSSL_INC =     -I/usr/local/opt/openssl/include
+
 ZLIB_INC = -I$(ZLIB_DIR)/include
-CFLAGS= $(SYSCFLAGS) $(DEBUG) -I. -DARCH_K8 $(GFLAGS_INC) $(ZLIB_INC) \
+CFLAGS= $(SYSCFLAGS) $(DEBUG) -I. -DARCH_K8 $(GFLAGS_INC) $(ZLIB_INC) $(OPENSSL_INC) \
         -Wno-deprecated -DS2_USE_EXACTFLOAT
 
 # ----- OS Dependent -----
@@ -30,9 +32,11 @@ ifeq ($(OS),Darwin) # Assume Mac Os X
 LD = ld -arch x86_64 -bundle -flat_namespace -undefined suppress
 GFLAGS_LNK = -L$(GFLAGS_DIR)/lib -lgflags
 ZLIB_LNK = -L$(ZLIB_DIR)/lib -lz
+OPENSSL_LNK = -L/usr/local/opt/openssl/lib
+CPPFLAGS=-I/usr/local/opt/openssl/include
 endif
 
-LDFLAGS=$(GFLAGS_LNK) $(ZLIB_LNK)
+LDFLAGS=$(GFLAGS_LNK) $(ZLIB_LNK) $(OPENSSL_LNK)
 
 # Real targets
 
