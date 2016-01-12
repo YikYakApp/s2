@@ -44,6 +44,7 @@ BINARIES= #s2cellid_test
 
 all: libs $(BINARIES)
 
+
 LIBS = \
 	libgoogle-base.a\
 	libgoogle-strings.a\
@@ -59,8 +60,19 @@ clean:
 	rm -f *.a
 	rm -f objs/*.o
 	rm -f $(BINARIES)
-	rm s2/*wrap*
 	rm -f *.so
+
+objdirs:
+	[ -d objs ] || mkdir objs
+	[ -d base/objs ] || mkdir base/objs
+	[ -d util/objs ] || mkdir util/objs
+	[ -d strings/objs ] || mkdir strings/objs
+	[ -d util/coding/objs ] || mkdir util/coding/objs
+	[ -d util/math/objs ] || mkdir util/math/objs
+
+printvars:
+			echo $$LDFLAGS  $(LDFLAGS)
+			echo $$CFLAGS   $(CFLAGS)
 
 # base.
 
@@ -70,6 +82,7 @@ GOOGLE_BASE_LIB_OBJS = \
 	base/objs/stringprintf.o
 
 base/objs/int128.o:base/int128.cc
+			echo $$CFLAGS   $(CFLAGS)
 	$(CCC) $(CFLAGS) -c base/int128.cc -o base/objs/int128.o
 base/objs/logging.o:base/logging.cc
 	$(CCC) $(CFLAGS) -c base/logging.cc -o base/objs/logging.o
