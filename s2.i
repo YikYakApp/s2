@@ -50,10 +50,7 @@ namespace std {
 #include "src/geometry/s2latlng.h"
 #include "src/geometry/s2latlngrect.h"
 #include "src/geometry/s2regioncoverer.h"
-#include "src/geometry/polygon.h"
-#include "src/geometry/polygonbuilder.h"
-/*#include "src/geometry/s2cell.h"*/
-/*#include "src/geometry/s2cellunion.h"*/
+#include "src/geometry/s2polygon.h"
 %}
 
 %include "src/geometry/r1interval.h"
@@ -65,9 +62,6 @@ namespace std {
 %include "src/geometry/s2latlng.h"
 %include "src/geometry/s2latlngrect.h"
 %include "src/geometry/s2regioncoverer.h"
-%include "src/geometry/polygon.h"
-%include "src/geometry/polygonbuilder.h"
-/*%include "src/geometry/s2cell.h"*/
-/*%include "src/geometry/s2cellunion.h"*/
+%include "src/geometry/s2polygon.h"
 
 
