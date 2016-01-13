@@ -31,6 +31,28 @@ static const uint64 MIX64 = GG_ULONGLONG(0x2b992ddfa23249d6);  // more of pi
 // Note that these methods may return any value for the given size, while
 // the corresponding HashToXX() methods avoids certain reserved values.
 // ----------------------------------------------------------------------
+//
+const uint32 kPrimes32[16] ={
+  65537, 65539, 65543, 65551, 65557, 65563, 65579, 65581,
+  65587, 65599, 65609, 65617, 65629, 65633, 65647, 65651,
+};
+
+uint32 Hash32StringWithSeed(const char *s, uint32 len, uint32 seed) {
+  uint32 n = seed;
+  size_t prime1 = 0, prime2 = 8;  // Indices into kPrimes32
+  union {
+    uint16 n;
+    char bytes[sizeof(uint16)];
+  } chunk;
+  for (const char *i = s, *const end = s + len; i != end; ) {
+    chunk.bytes[0] = *i++;
+    chunk.bytes[1] = i == end ? 0 : *i++;
+    n = n * kPrimes32[prime1++] ^ chunk.n * kPrimes32[prime2++];
+    prime1 &= 0x0F;
+    prime2 &= 0x0F;
+  }
+  return n;
+}
 
 // These slow down a lot if inlined, so do not inline them  --Sanjay
 extern uint32 Hash32StringWithSeed(const char *s, uint32 len, uint32 c);
