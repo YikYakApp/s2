@@ -10,6 +10,9 @@
 
 class S2LatLngRect;
 
+#define CHECK(x)
+#define DCHECK_EQ(x,y)
+
 // This class contains various utility functions related to edges.  It
 // collects together common code that is needed to implement polygonal
 // geometry such as polylines, loops, and general polygons.
