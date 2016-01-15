@@ -1,27 +1,28 @@
 %module s2
 
-/*#pragma SWIG nowarn=312,451,454,503,362*/
 
 
 %include <typemaps.i>
 %include <exception.i>
-
-%include "std_string.i"
-%include "std_vector.i"
-%include "std_common.i"
-%include "std_pair.i"
-%include "std_list.i"
-%include "std_map.i"
+%include <stl.i>
 
 
 
-// This will create 2 wrapped types in Go called
-// "StringVector" and "ByteVector" for their respective
-// types.
-namespace std {
-   %template(StringVector) vector<string>;
-   %template(ByteVector) vector<char>;
-}
+%{
+#include <vector>
+#if defined __GNUC__ || defined __APPLE__
+#include <ext/hash_map>
+#include <ext/hash_set>
+#else
+#include <hash_map>
+#include <hash_set>
+#endif
+#include <set>
+#include <map>
+#include <string>
+#include "base/basictypes.h"
+%}
+
 
 
 // S2CellId named PACKED.  We don't need it so we clobber it with an empty body.
@@ -35,8 +36,31 @@ namespace std {
 // about that.
 #pragma SWIG nowarn=510
 
-// If we don't ignore this, the wrapper ends up assigning to None
-%ignore S2CellId::None;
+// suppress warnings about missing equality operators
+#pragma SWIG nowarn=503
+
+
+/*%typemap(in, numinputs=0)*/
+/*vector<S2CellId> *OUTPUT(vector<S2CellId> temp) {*/
+  /*$1 = &temp;*/
+/*}*/
+
+/*%typemap(argout, fragment="t_output_helper")*/
+/*vector<S2CellId> *OUTPUT {*/
+  /*$result = t_output_helper($result, vector_output_helper($1, &FromS2CellId));*/
+/*}*/
+
+/*%apply vector<S2CellId> *OUTPUT {vector<S2CellId> *covering};*/
+/*%apply vector<S2CellId> *OUTPUT {vector<S2CellId> *output};*/
+
+
+
+/*//  templates for vectors*/
+/*namespace std {*/
+        /*%template(StringVector) vector<string>;*/
+        /*%template(ByteVector) vector<char>;*/
+        /*%template(S2PointVector) vector<S2Point>;*/
+/*}*/
 
 
 
@@ -50,6 +74,9 @@ namespace std {
 #include "src/geometry/s2latlng.h"
 #include "src/geometry/s2latlngrect.h"
 #include "src/geometry/s2regioncoverer.h"
+#include "src/geometry/s2cell.h"
+#include "src/geometry/s2cellunion.h"
+#include "src/geometry/s2loop.h"
 #include "src/geometry/s2polygon.h"
 %}
 
@@ -62,6 +89,33 @@ namespace std {
 %include "src/geometry/s2latlng.h"
 %include "src/geometry/s2latlngrect.h"
 %include "src/geometry/s2regioncoverer.h"
+%include "src/geometry/s2cell.h"
+%include "src/geometry/s2cellunion.h"
+%include "src/geometry/s2loop.h"
 %include "src/geometry/s2polygon.h"
+
+// swig does not generate instance methods if there is a static method with the same name. 
+// Insert dummy instance methods for these so that the go code will compile
+%insert(go_wrapper) %{
+
+func (p SwigcptrS2Cell) AverageArea__SWIG_0(arg1 int) (_swig_ret float64) {
+	var swig_r float64
+	return swig_r
+}
+
+func (p SwigcptrS2Loop) IsValid__SWIG_1(arg1 Vector_Sl_S2Point_Sg_, arg2 int) (_swig_ret bool) {
+	var swig_r bool
+	return swig_r
+}
+
+func (p SwigcptrS2Polygon) IsValid__SWIG_0(arg1 Vector_Sl_S2Loop_Sm__Sg_) (_swig_ret bool) {
+	var swig_r bool
+	return swig_r
+}
+
+
+
+%}        
+
 
 
