@@ -79,7 +79,8 @@ printvars:
 GOOGLE_BASE_LIB_OBJS = \
 	base/objs/int128.o\
 	base/objs/logging.o\
-	base/objs/stringprintf.o
+	base/objs/stringprintf.o\
+	base/objs/strtoint.o
 
 base/objs/int128.o:base/int128.cc
 			echo $$CFLAGS   $(CFLAGS)

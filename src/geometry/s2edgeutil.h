@@ -10,6 +10,9 @@
 
 class S2LatLngRect;
 
+//#define CHECK(x)
+//#define DCHECK_EQ(x,y)
+
 // This class contains various utility functions related to edges.  It
 // collects together common code that is needed to implement polygonal
 // geometry such as polylines, loops, and general polygons.
@@ -305,8 +308,6 @@ inline int S2EdgeUtil::EdgeCrosser::RobustCrossing(S2Point const* d) {
   } else if ((bda & acb_) == 0) {
     result = 0;  // At least one value is zero -- two vertices are identical.
   } else {  // Slow path.
-    DCHECK_EQ(acb_, bda);
-    DCHECK_NE(0, bda);
     result = RobustCrossingInternal(d);
   }
   // Now save the current vertex D as the next vertex C, and also save the

@@ -21,6 +21,20 @@ using std::max;
 using std::swap;
 using std::reverse;
 
+#if defined __GNUC__ || defined __APPLE__
+#include <ext/hash_map>
+#else
+#include <hash_map>
+#endif
+using __gnu_cxx::hash_map;
+
+#if defined __GNUC__ || defined __APPLE__
+#include <ext/hash_set>
+#else
+#include <hash_set>
+#endif
+using __gnu_cxx::hash_set;
+
 #include <iterator>
 #include <limits>
 using std::numeric_limits;
@@ -124,6 +138,173 @@ string UInt64ToString(uint64 ui64) {
 //    for FastTimeToBuffer(), we guarantee that it is.)
 // ----------------------------------------------------------------------
 
+
+static const char two_ASCII_digits[100][2] = {
+  {'0','0'}, {'0','1'}, {'0','2'}, {'0','3'}, {'0','4'},
+  {'0','5'}, {'0','6'}, {'0','7'}, {'0','8'}, {'0','9'},
+  {'1','0'}, {'1','1'}, {'1','2'}, {'1','3'}, {'1','4'},
+  {'1','5'}, {'1','6'}, {'1','7'}, {'1','8'}, {'1','9'},
+  {'2','0'}, {'2','1'}, {'2','2'}, {'2','3'}, {'2','4'},
+  {'2','5'}, {'2','6'}, {'2','7'}, {'2','8'}, {'2','9'},
+  {'3','0'}, {'3','1'}, {'3','2'}, {'3','3'}, {'3','4'},
+  {'3','5'}, {'3','6'}, {'3','7'}, {'3','8'}, {'3','9'},
+  {'4','0'}, {'4','1'}, {'4','2'}, {'4','3'}, {'4','4'},
+  {'4','5'}, {'4','6'}, {'4','7'}, {'4','8'}, {'4','9'},
+  {'5','0'}, {'5','1'}, {'5','2'}, {'5','3'}, {'5','4'},
+  {'5','5'}, {'5','6'}, {'5','7'}, {'5','8'}, {'5','9'},
+  {'6','0'}, {'6','1'}, {'6','2'}, {'6','3'}, {'6','4'},
+  {'6','5'}, {'6','6'}, {'6','7'}, {'6','8'}, {'6','9'},
+  {'7','0'}, {'7','1'}, {'7','2'}, {'7','3'}, {'7','4'},
+  {'7','5'}, {'7','6'}, {'7','7'}, {'7','8'}, {'7','9'},
+  {'8','0'}, {'8','1'}, {'8','2'}, {'8','3'}, {'8','4'},
+  {'8','5'}, {'8','6'}, {'8','7'}, {'8','8'}, {'8','9'},
+  {'9','0'}, {'9','1'}, {'9','2'}, {'9','3'}, {'9','4'},
+  {'9','5'}, {'9','6'}, {'9','7'}, {'9','8'}, {'9','9'}
+};
+
+char* FastUInt32ToBufferLeft(uint32 u, char* buffer) {
+  int digits;
+  const char *ASCII_digits = NULL;
+  // The idea of this implementation is to trim the number of divides to as few
+  // as possible by using multiplication and subtraction rather than mod (%),
+  // and by outputting two digits at a time rather than one.
+  // The huge-number case is first, in the hopes that the compiler will output
+  // that case in one branch-free block of code, and only output conditional
+  // branches into it from below.
+  if (u >= 1000000000) {  // >= 1,000,000,000
+    digits = u / 100000000;  // 100,000,000
+    ASCII_digits = two_ASCII_digits[digits];
+    buffer[0] = ASCII_digits[0];
+    buffer[1] = ASCII_digits[1];
+    buffer += 2;
+sublt100_000_000:
+    u -= digits * 100000000;  // 100,000,000
+lt100_000_000:
+    digits = u / 1000000;  // 1,000,000
+    ASCII_digits = two_ASCII_digits[digits];
+    buffer[0] = ASCII_digits[0];
+    buffer[1] = ASCII_digits[1];
+    buffer += 2;
+sublt1_000_000:
+    u -= digits * 1000000;  // 1,000,000
+lt1_000_000:
+    digits = u / 10000;  // 10,000
+    ASCII_digits = two_ASCII_digits[digits];
+    buffer[0] = ASCII_digits[0];
+    buffer[1] = ASCII_digits[1];
+    buffer += 2;
+sublt10_000:
+    u -= digits * 10000;  // 10,000
+lt10_000:
+    digits = u / 100;
+    ASCII_digits = two_ASCII_digits[digits];
+    buffer[0] = ASCII_digits[0];
+    buffer[1] = ASCII_digits[1];
+    buffer += 2;
+sublt100:
+    u -= digits * 100;
+lt100:
+    digits = u;
+    ASCII_digits = two_ASCII_digits[digits];
+    buffer[0] = ASCII_digits[0];
+    buffer[1] = ASCII_digits[1];
+    buffer += 2;
+done:
+    *buffer = 0;
+    return buffer;
+  }
+
+  if (u < 100) {
+    digits = u;
+    if (u >= 10) goto lt100;
+    *buffer++ = '0' + digits;
+    goto done;
+  }
+  if (u  <  10000) {   // 10,000
+    if (u >= 1000) goto lt10_000;
+    digits = u / 100;
+    *buffer++ = '0' + digits;
+    goto sublt100;
+  }
+  if (u  <  1000000) {   // 1,000,000
+    if (u >= 100000) goto lt1_000_000;
+    digits = u / 10000;  //    10,000
+    *buffer++ = '0' + digits;
+    goto sublt10_000;
+  }
+  if (u  <  100000000) {   // 100,000,000
+    if (u >= 10000000) goto lt100_000_000;
+    digits = u / 1000000;  //   1,000,000
+    *buffer++ = '0' + digits;
+    goto sublt1_000_000;
+  }
+  // we already know that u < 1,000,000,000
+  digits = u / 100000000;   // 100,000,000
+  *buffer++ = '0' + digits;
+  goto sublt100_000_000;
+}
+
+char* FastInt32ToBufferLeft(int32 i, char* buffer) {
+  uint32 u = i;
+  if (i < 0) {
+    *buffer++ = '-';
+    u = -i;
+  }
+  return FastUInt32ToBufferLeft(u, buffer);
+}
+
+char* FastUInt64ToBufferLeft(uint64 u64, char* buffer) {
+  int digits;
+  const char *ASCII_digits = NULL;
+
+  uint32 u = static_cast<uint32>(u64);
+  if (u == u64) return FastUInt32ToBufferLeft(u, buffer);
+
+  uint64 top_11_digits = u64 / 1000000000;
+  buffer = FastUInt64ToBufferLeft(top_11_digits, buffer);
+  u = u64 - (top_11_digits * 1000000000);
+
+  digits = u / 10000000;  // 10,000,000
+  DCHECK_LT(digits, 100);
+  ASCII_digits = two_ASCII_digits[digits];
+  buffer[0] = ASCII_digits[0];
+  buffer[1] = ASCII_digits[1];
+  buffer += 2;
+  u -= digits * 10000000;  // 10,000,000
+  digits = u / 100000;  // 100,000
+  ASCII_digits = two_ASCII_digits[digits];
+  buffer[0] = ASCII_digits[0];
+  buffer[1] = ASCII_digits[1];
+  buffer += 2;
+  u -= digits * 100000;  // 100,000
+  digits = u / 1000;  // 1,000
+  ASCII_digits = two_ASCII_digits[digits];
+  buffer[0] = ASCII_digits[0];
+  buffer[1] = ASCII_digits[1];
+  buffer += 2;
+  u -= digits * 1000;  // 1,000
+  digits = u / 10;
+  ASCII_digits = two_ASCII_digits[digits];
+  buffer[0] = ASCII_digits[0];
+  buffer[1] = ASCII_digits[1];
+  buffer += 2;
+  u -= digits * 10;
+  digits = u;
+  *buffer++ = '0' + digits;
+  *buffer = 0;
+  return buffer;
+}
+
+char* FastInt64ToBufferLeft(int64 i, char* buffer) {
+  uint64 u = i;
+  if (i < 0) {
+    *buffer++ = '-';
+    u = -i;
+  }
+  return FastUInt64ToBufferLeft(u, buffer);
+}
+
+
 char *FastInt64ToBuffer(int64 i, char* buffer) {
   FastInt64ToBufferLeft(i, buffer);
   return buffer;
@@ -171,29 +352,6 @@ char *FastHex32ToBuffer(uint32 value, char* buffer) {
 
 // Several converters use this table to reduce
 // division and modulo operations.
-static const char two_ASCII_digits[100][2] = {
-  {'0','0'}, {'0','1'}, {'0','2'}, {'0','3'}, {'0','4'},
-  {'0','5'}, {'0','6'}, {'0','7'}, {'0','8'}, {'0','9'},
-  {'1','0'}, {'1','1'}, {'1','2'}, {'1','3'}, {'1','4'},
-  {'1','5'}, {'1','6'}, {'1','7'}, {'1','8'}, {'1','9'},
-  {'2','0'}, {'2','1'}, {'2','2'}, {'2','3'}, {'2','4'},
-  {'2','5'}, {'2','6'}, {'2','7'}, {'2','8'}, {'2','9'},
-  {'3','0'}, {'3','1'}, {'3','2'}, {'3','3'}, {'3','4'},
-  {'3','5'}, {'3','6'}, {'3','7'}, {'3','8'}, {'3','9'},
-  {'4','0'}, {'4','1'}, {'4','2'}, {'4','3'}, {'4','4'},
-  {'4','5'}, {'4','6'}, {'4','7'}, {'4','8'}, {'4','9'},
-  {'5','0'}, {'5','1'}, {'5','2'}, {'5','3'}, {'5','4'},
-  {'5','5'}, {'5','6'}, {'5','7'}, {'5','8'}, {'5','9'},
-  {'6','0'}, {'6','1'}, {'6','2'}, {'6','3'}, {'6','4'},
-  {'6','5'}, {'6','6'}, {'6','7'}, {'6','8'}, {'6','9'},
-  {'7','0'}, {'7','1'}, {'7','2'}, {'7','3'}, {'7','4'},
-  {'7','5'}, {'7','6'}, {'7','7'}, {'7','8'}, {'7','9'},
-  {'8','0'}, {'8','1'}, {'8','2'}, {'8','3'}, {'8','4'},
-  {'8','5'}, {'8','6'}, {'8','7'}, {'8','8'}, {'8','9'},
-  {'9','0'}, {'9','1'}, {'9','2'}, {'9','3'}, {'9','4'},
-  {'9','5'}, {'9','6'}, {'9','7'}, {'9','8'}, {'9','9'}
-};
-
 static inline void PutTwoDigits(int i, char* p) {
   DCHECK_GE(i, 0);
   DCHECK_LT(i, 100);
