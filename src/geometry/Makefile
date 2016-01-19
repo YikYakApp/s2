@@ -1,7 +1,6 @@
 # Please edit the following:
 PYTHON_VER=2.6
-# TODO(tudorh): Fix this.
-GFLAGS_DIR=/home/tudorh/usr
+GFLAGS_DIR=/usr/local
 SWIG_BINARY=swig
 ZLIB_DIR=/usr
 
