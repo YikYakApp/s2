@@ -57,7 +57,7 @@
 #include "src/geometry/r1interval.h"
 #include "src/geometry/s1angle.h"
 #include "src/geometry/s1interval.h"
-#include "src/geometry/s2.h"
+/*#include "src/geometry/s2.h"*/
 #include "src/geometry/s2cellid.h"
 #include "src/geometry/s2region.h"
 #include "src/geometry/s2pointregion.h"
@@ -120,7 +120,7 @@
 %include "src/geometry/r1interval.h"
 %include "src/geometry/s1angle.h"
 %include "src/geometry/s1interval.h"
-%include "src/geometry/s2.h"
+/*%include "src/geometry/s2.h"*/
 %include "src/geometry/s2cellid.h"
 %include "src/geometry/s2region.h"
 %include "src/geometry/s2pointregion.h"
