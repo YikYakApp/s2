@@ -163,6 +163,7 @@ VType& Vector2<VType>::operator[](const int b) {
 
 template <typename VType>
 VType Vector2<VType>::operator[](const int b) const {
+        LG << "vector2 " << b << "\n";
   DCHECK(b >= 0);
   DCHECK(b <= 1);
   return c_[b];

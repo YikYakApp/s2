@@ -56,7 +56,8 @@ class S2LatLng {
   inline static S1Angle Longitude(S2Point const& p);
 
   // Accessor methods.
-  S1Angle lat() const { return S1Angle::Radians(coords_[0]); }
+  
+  S1Angle lat() const { LG  <<  this; return S1Angle::Radians(coords_[0]); }
   S1Angle lng() const { return S1Angle::Radians(coords_[1]); }
   Vector2_d const& coords() const { return coords_; }
 
@@ -166,6 +167,7 @@ inline S1Angle S2LatLng::Longitude(S2Point const& p) {
 }
 
 inline bool S2LatLng::is_valid() const {
+        LG  << this;
   return fabs(lat().radians()) <= M_PI_2 && fabs(lng().radians()) <= M_PI;
 }
 

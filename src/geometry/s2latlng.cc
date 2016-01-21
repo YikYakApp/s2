@@ -3,6 +3,7 @@
 #include "base/logging.h"
 #include "strings/stringprintf.h"
 #include "s2latlng.h"
+#include <unistd.h>
 
 S2LatLng S2LatLng::Normalized() const {
   // drem(x, 2 * M_PI) reduces its argument to the range [-M_PI, M_PI]
@@ -12,7 +13,8 @@ S2LatLng S2LatLng::Normalized() const {
 }
 
 S2Point S2LatLng::ToPoint() const {
-  DCHECK(is_valid());
+LG << this;
+	//DCHECK(is_valid());
   // As of crosstool v14, gcc tries to calculate sin(phi), cos(phi),
   // sin(theta), cos(theta) on the following section by two sincos()
   // calls. However, for some inputs, sincos() returns significantly
@@ -22,9 +24,18 @@ S2Point S2LatLng::ToPoint() const {
   // to prohibit the compiler to use such sincos() call, because sin()
   // and cos() don't seem to have the problem. See b/3088321 for
   // details.
+	LG << coords_[0] << "\n";
+	LG << coords_[1] << "\n";
+
+	usleep(1000*1000); // takes microseconds
+
+LG << lat().radians()  << " " << lat() << " " << lng() << " done\n";
   volatile double phi = lat().radians();
+				LOG_INFO;
   volatile double theta = lng().radians();
+				LOG_INFO;
   double cosphi = cos(phi);
+				LOG_INFO;
   return S2Point(cos(theta) * cosphi, sin(theta) * cosphi, sin(phi));
 }
 
