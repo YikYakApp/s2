@@ -8,6 +8,8 @@
 %include <stl.i>
 %include <std_list.i>
 %include <std_string.i>
+%include <std_map.i>
+%include <std_pair.i>
 
 
 
@@ -85,11 +87,7 @@
 
 
 
-
-/*%apply vector<S2CellId> *OUTPUT {vector<S2CellId> *covering};*/
-/*%apply vector<S2CellId> *OUTPUT {vector<S2CellId> *output};*/
-/*%apply vector<S2Point> *OUTPUT {vector<S2Point> *output};*/
-
+%feature("director"); 
 
 
 
@@ -114,7 +112,6 @@
 /*%template(S2LoopVector) std::vector<S2Loop>;*/
 
 
-/*%feature("director") S2Point;*/
 
 %include "src/geometry/util/math/vector3-inl.h"
 %include "src/geometry/r1interval.h"
@@ -144,18 +141,18 @@
 %insert(go_wrapper) %{
 
 func (p SwigcptrS2Cell) AverageArea__SWIG_0(arg1 int) (_swig_ret float64) {
-	var swig_r float64
-	return swig_r
+	/*var swig_r float64*/
+	return 1.0
 }
 
 func (p SwigcptrS2Loop) IsValid__SWIG_1(arg1 Vector_Sl_S2Point_Sg_, arg2 int) (_swig_ret bool) {
-	var swig_r bool
-	return swig_r
+	/*var swig_r bool*/
+	return true
 }
 
 func (p SwigcptrS2Polygon) IsValid__SWIG_0(arg1 Vector_Sl_S2Loop_Sm__Sg_) (_swig_ret bool) {
-	var swig_r bool
-	return swig_r
+	/*var swig_r bool*/
+	return true
 }
 
 %}        
